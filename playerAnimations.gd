@@ -23,15 +23,17 @@ func _input(event):
 
 	#Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if Input.is_action_pressed('ui_right'):
+	if Input.is_action_pressed('charge'):
+		set_animation('charging')
+	elif Input.is_action_pressed('ui_right'):
 		flip_h = true
 		set_animation('run')
 	elif Input.is_action_pressed('ui_left'):
 		flip_h = false
 		set_animation('run')
-	elif (Input.is_action_pressed('ui_down')):
+	elif Input.is_action_pressed('ui_down'):
 		set_animation('run')
-	elif (Input.is_action_pressed('ui_up')):
+	elif Input.is_action_pressed('ui_up'):
 		set_animation('run')
 	else:
 		flip_h = true if last_pressed == "right" else false
