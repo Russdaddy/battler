@@ -7,7 +7,7 @@ extends KinematicBody2D
 export (int) var speed = 300
 
 var velocity = Vector2()
-#one of idle,run,charge,attack
+#one of idle,charge,attack,run_left_,run_right
 var status:String = 'idle'
 var attackTimer = 0;
 
@@ -25,14 +25,18 @@ func get_input():
 	velocity = Vector2()
 	if Input.is_action_pressed('charge'):
 		status = 'charge'
-	else: 
+	elif attackTimer == 0: 
 		if Input.is_action_pressed('ui_right'):
+			status = 'run_right'
 			velocity.x +=1
 		if Input.is_action_pressed('ui_left'):
+			status = 'run_left'
 			velocity.x -=1	
-		if Input.is_action_pressed('ui_down'):	
+		if Input.is_action_pressed('ui_down'):
+			status = "run_down"
 			velocity.y +=1
 		if Input.is_action_pressed('ui_up'):
+			status = "run_up"
 			velocity.y -=1
 		if !Input.is_action_pressed('ui_right') && !Input.is_action_pressed('ui_left') && !Input.is_action_pressed('ui_up') && !Input.is_action_pressed('ui_down') && status != 'attack':
 			status = 'idle'

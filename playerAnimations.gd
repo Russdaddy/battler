@@ -22,24 +22,35 @@ func _input(event):
 		last_pressed = "left"
 	pass
 	
-func _process(delta):
-	if get_node("..").status == "charge":
-		set_animation('charging')
-	elif get_node("..").status == "attack":
-		set_animation("attack")
-	elif Input.is_action_pressed('ui_right'):
+func handle_flipping():
+	set_animation("run")
+	if Input.is_action_pressed("ui_right"):
 		flip_h = true
-		set_animation('run')
-	elif Input.is_action_pressed('ui_left'):
+	elif Input.is_action_pressed("ui_left"):
 		flip_h = false
-		set_animation('run')
-	elif Input.is_action_pressed('ui_down'):
-		set_animation('run')
-	elif Input.is_action_pressed('ui_up'):
-		set_animation('run')
 	else:
 		flip_h = true if last_pressed == "right" else false
-		set_animation('default')
+	
+func _process(delta):
+	match get_node("..").status:
+		"charge":
+			set_animation("charging")
+		"attack":
+			set_animation("attack")
+		"run_left":
+			flip_h = false
+			set_animation("run")
+		"run_right":
+			flip_h = true
+			set_animation("run")
+		"run_up":
+			handle_flipping()
+		"run_down":
+			handle_flipping()
+		"idle":
+			flip_h = true if last_pressed == "right" else false
+			set_animation('default')
+	
 #	elif(!Input.is_action_pressed('ui_left') && !Input.is_action_pressed('ui_right')):
 #		flip_h = true if last_pressed == "right" else false
 #		set_animation('default')
