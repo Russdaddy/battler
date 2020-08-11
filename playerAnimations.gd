@@ -14,17 +14,19 @@ func _ready():
 	play()
 	pass # Replace with function body.
 
+#last pressed tracking for turn
 func _input(event):
-	if(event.is_action_released("ui_right")):
+	if(event.is_action_released("ui_right")): 
 		last_pressed = "right"
 	if(event.is_action_released("ui_left")):
 		last_pressed = "left"
 	pass
-
-	#Called every frame. 'delta' is the elapsed time since the previous frame.
+	
 func _process(delta):
-	if Input.is_action_pressed('charge'):
+	if get_node("..").status == "charge":
 		set_animation('charging')
+	elif get_node("..").status == "attack":
+		set_animation("attack")
 	elif Input.is_action_pressed('ui_right'):
 		flip_h = true
 		set_animation('run')
