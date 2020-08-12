@@ -10,6 +10,7 @@ var velocity = Vector2()
 #one of idle,charge,attack,run_left_,run_right
 var status:String = 'idle'
 var attackTimer = 0;
+var chargeLength = 0;
 export var attackCooldown = 0
 
 # Called when the node enters the scene tree for the first time.
@@ -18,13 +19,16 @@ func _ready():
 	
 func _input(event):
 	if event.is_action_released('charge') && attackCooldown == 0:
-		attackCooldown = 100
+		if chargeLength > 30:
+			attackCooldown = 100
+		chargeLength = 0
 		attackTimer = 20
 	pass
 	
 func get_input():
 	velocity = Vector2()
 	if Input.is_action_pressed('charge') && attackCooldown == 0:
+		chargeLength+=1
 		status = 'charge'
 	elif attackTimer == 0: 
 		if Input.is_action_pressed('ui_right'):
@@ -58,7 +62,6 @@ func handle_attack():
 pass
 
 func _physics_process(_delta):
-	print(status)
 	handle_attack()
 	handle_attack_cooldown()
 	get_input()
