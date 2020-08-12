@@ -7,7 +7,7 @@ extends KinematicBody2D
 var velocity = Vector2(0,0)
 var hSpeed = -20
 var vSpeed = 0
-var horizontalDecayRate = 4
+var horizontalDecayRate = 10
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -21,15 +21,14 @@ func handle_collisions(delta):
 		if collision.collider.name == "player":
 			match collision.collider.status:
 				"idle":
-					print("hurt")
+					hSpeed=0
 				"attack":
 					hSpeed = 500
-				
 					print("attack")
 
 
 func _physics_process(delta):
-	 handle_collisions(delta)
+	handle_collisions(delta)
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

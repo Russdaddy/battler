@@ -4,7 +4,7 @@ extends KinematicBody2D
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-export (int) var speed = 300
+export (int) var speed = 5
 
 var velocity = Vector2()
 #one of idle,charge,attack,run_left_,run_right
@@ -13,12 +13,23 @@ var attackTimer = 0;
 var chargeLength = 0;
 export var attackCooldown = 0
 
+var space_rid
+var space_state
+var result
+
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
+#func _ready():
+#	pass # Replace with function body.
+	
+func handle_attack_raycast():
+	var raycastDistance = 100 if (get_node("AnimatedSprite").flip_h) else -100
+	result = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y),[self])
+	print(result)
+	pass
 	
 func _input(event):
 	if event.is_action_released('charge') && attackCooldown == 0:
+		handle_attack_raycast()
 		if chargeLength > 30:
 			attackCooldown = 100
 		chargeLength = 0
@@ -62,10 +73,12 @@ func handle_attack():
 pass
 
 func _physics_process(_delta):
+	space_rid = get_world_2d().space
+	space_state = Physics2DServer.space_get_direct_state(space_rid)
 	handle_attack()
 	handle_attack_cooldown()
 	get_input()
-	velocity = move_and_slide(velocity)
+	velocity = move_and_collide(velocity)
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
