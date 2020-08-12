@@ -17,14 +17,18 @@ var space_rid
 var space_state
 var result
 
+signal attack_hit
+
 # Called when the node enters the scene tree for the first time.
 #func _ready():
 #	pass # Replace with function body.
 	
 func handle_attack_raycast():
-	var raycastDistance = 100 if (get_node("AnimatedSprite").flip_h) else -100
+	var raycastDistance = 30 if (get_node("AnimatedSprite").flip_h) else -30
 	result = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y),[self])
 	print(result)
+	if result:
+		emit_signal("attack_hit",result.collider)
 	pass
 	
 func _input(event):
