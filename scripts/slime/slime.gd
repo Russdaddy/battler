@@ -10,6 +10,9 @@ var horizontalDecayRate = 10
 var hittable = true
 var hit = false
 var hitFrom = {}
+var movementInterval = 200
+var hitTimer = 100
+var dead = false
 
 var rng = RandomNumberGenerator.new()
 
@@ -23,17 +26,36 @@ func _ready():
 
 func handle_collisions(delta):
 	var collision = move_and_collide(Vector2(hSpeed,vSpeed) * delta)
+	if hit:
+		hitTimer = 100
+		dead = true
+		hSpeed = 500 if (hitFrom.x < self.position.x) else -500
+		hit = false
+
+func handle_movement():
 	if(hSpeed > 0):
 		hSpeed -= horizontalDecayRate
 	elif (hSpeed < 0):
 		hSpeed += horizontalDecayRate
-	if hit:
-		print(hitFrom)
-		hSpeed = 500 if (hitFrom.x < self.position.x) else -500
-		hit = false
+	if hitTimer == 0 && movementInterval == 0:
+		hSpeed = -300
+		movementInterval = 200
+	
+func handle_timers():
+	if hitTimer > 0:
+		hitTimer-=1
+	if movementInterval > 0:
+		movementInterval-=2
+
+func handle_death():
+	if hSpeed == 0 && dead == true:
+		self.queue_free()
 
 func _physics_process(delta):
+	handle_death()
+	handle_timers()
 	handle_collisions(delta)
+	handle_movement()
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
