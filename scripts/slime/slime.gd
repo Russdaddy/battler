@@ -4,9 +4,12 @@ extends KinematicBody2D
 # var a = 2
 # var b = "text"
 var velocity = Vector2(0,0)
-var hSpeed = -50
+var hSpeed = -500
 var vSpeed = 0
 var horizontalDecayRate = 10
+var hittable = true
+var hit = false
+var hitFrom = {}
 
 var rng = RandomNumberGenerator.new()
 
@@ -17,23 +20,17 @@ func _ready():
 	var ypos = rng.randf_range(100,700)
 	position.x = xpos
 	position.y = ypos
-	get_node("../player").connect("attack_hit",self,"_on_attack_hit")
-
-func _on_attack_hit(collider):
-	print('hit',collider)
 
 func handle_collisions(delta):
 	var collision = move_and_collide(Vector2(hSpeed,vSpeed) * delta)
 	if(hSpeed > 0):
 		hSpeed -= horizontalDecayRate
-#	if collision:
-#		if collision.collider.name == "player":
-#			match collision.collider.status:
-#				"idle":
-#					hSpeed=0
-#				"attack":
-#					hSpeed = 500d
-#					print("attack")
+	elif (hSpeed < 0):
+		hSpeed += horizontalDecayRate
+	if hit:
+		print(hitFrom)
+		hSpeed = 500 if (hitFrom.x < self.position.x) else -500
+		hit = false
 
 func _physics_process(delta):
 	handle_collisions(delta)
