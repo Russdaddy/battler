@@ -27,7 +27,6 @@ func handle_attack_raycast():
 	var raycastDistance = 30 if (get_node("AnimatedSprite").flip_h) else -30
 	result = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y),[self])
 	if result:
-		print(result)
 		if result.collider.hittable:
 			result.collider.hit = true
 			result.collider.hitFrom = {"normal":result.normal,"x":self.position.x,"y":self.position.y}

@@ -9,8 +9,8 @@
 [ext_resource path="res://assets/run_1.png" type="Texture" id=9]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 13.6852
-height = 48.793
+radius = 11.0155
+height = 9.38656
 
 [sub_resource type="AtlasTexture" id=2]
 flags = 4
@@ -146,6 +146,6 @@ script = ExtResource( 3 )
 shape = SubResource( 1 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="player"]
-position = Vector2( -6.67419, -9.34384 )
+position = Vector2( -8.00903, -8.009 )
 frames = SubResource( 22 )
 script = ExtResource( 1 )
