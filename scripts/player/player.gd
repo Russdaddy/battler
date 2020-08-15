@@ -15,7 +15,8 @@ export var attackCooldown = 0
 
 var space_rid
 var space_state
-var result
+var rayMid
+var rayTop
 
 signal attack_hit
 
@@ -24,15 +25,23 @@ signal attack_hit
 #	pass # Replace with function body.
 	
 func handle_attack_raycast():
-	var raycastDistance = 30 if (get_node("AnimatedSprite").flip_h) else -30
-	result = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y),[self])
-	if result:
-		if result.collider.hittable:
-			result.collider.hit = true
-			result.collider.hitFrom = {"normal":result.normal,"x":self.position.x,"y":self.position.y}
+	var raycastDistance = 50 if (get_node("AnimatedSprite").flip_h) else -50
+	rayMid = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y),[self])
+	rayTop = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y - 40),[self])
+	
+	if rayMid:
+		if rayMid.collider.hittable:
+			rayMid.collider.hit = true
+			rayMid.collider.hitFrom = Vector2(self.position.x,self.position.y)
+	if rayTop:
+		print("raytop")
+		if rayTop.collider.hittable:
+			rayTop.collider.hit = true
+			rayTop.collider.hitFrom = Vector2(self.position.x,self.position.y)
 	pass
 	
 func _input(event):
+
 	if event.is_action_released('charge') && attackCooldown == 0:
 		handle_attack_raycast()
 		if chargeLength > 30:
@@ -40,7 +49,7 @@ func _input(event):
 		chargeLength = 0
 		attackTimer = 20
 	pass
-	
+
 func get_input():
 	velocity = Vector2()
 	if Input.is_action_pressed('charge') && attackCooldown == 0:
@@ -77,7 +86,13 @@ func handle_attack():
 		status = "idle"
 pass
 
+#func _draw():
+#	print('draw')
+#	var raycastDistance = 50 if (get_node("AnimatedSprite").flip_h) else -50
+#	draw_line(Vector2(0,-30),Vector2(raycastDistance,-30),Color.red,1,true)
+
 func _physics_process(_delta):
+#	update()
 	space_rid = get_world_2d().space
 	space_state = Physics2DServer.space_get_direct_state(space_rid)
 	handle_attack()

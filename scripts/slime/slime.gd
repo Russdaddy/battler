@@ -9,7 +9,7 @@ var vSpeed = 0
 var horizontalDecayRate = 10
 var hittable = true
 var hit = false
-var hitFrom = {}
+var hitFrom = Vector2(0,0)
 var movementInterval = 200
 var hitTimer = 100
 var dead = false
@@ -24,15 +24,16 @@ func _ready():
 	position.x = xpos
 	position.y = ypos
 
-func handle_collisions(delta):
-	var collision = move_and_collide(Vector2(hSpeed,vSpeed) * delta)
+func handle_hit(delta):
 	if hit:
 		hitTimer = 100
 		dead = true
 		hSpeed = 500 if (hitFrom.x < self.position.x) else -500
 		hit = false
 
-func handle_movement():
+func handle_movement(delta):
+	var velocity = Vector2(hSpeed,vSpeed)
+	move_and_collide(velocity * delta)
 	if(hSpeed > 0):
 		hSpeed -= horizontalDecayRate
 	elif (hSpeed < 0):
@@ -54,8 +55,8 @@ func handle_death():
 func _physics_process(delta):
 	handle_death()
 	handle_timers()
-	handle_collisions(delta)
-	handle_movement()
+	handle_hit(delta)
+	handle_movement(delta)
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
