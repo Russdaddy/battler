@@ -17,6 +17,7 @@ var space_rid
 var space_state
 var rayMid
 var rayTop
+var rayBot
 
 signal attack_hit
 
@@ -28,27 +29,27 @@ func handle_attack_raycast():
 	var raycastDistance = 50 if (get_node("AnimatedSprite").flip_h) else -50
 	rayMid = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y),[self])
 	rayTop = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y - 40),[self])
+	rayBot = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y + 40),[self])
 	
 	if rayMid:
-		if rayMid.collider.hittable:
-			rayMid.collider.hit = true
-			rayMid.collider.hitFrom = Vector2(self.position.x,self.position.y)
+		handleRayHit(rayMid)
 	if rayTop:
-		print("raytop")
-		if rayTop.collider.hittable:
-			rayTop.collider.hit = true
-			rayTop.collider.hitFrom = Vector2(self.position.x,self.position.y)
-	pass
+		handleRayHit(rayTop)
+	if rayBot:
+		handleRayHit(rayBot)
+
+func handleRayHit(ray):
+	if ray.collider.hittable:
+		ray.collider.hit = true
+		ray.collider.hitFrom = Vector2(self.position.x,self.position.y)
 	
 func _input(event):
-
 	if event.is_action_released('charge') && attackCooldown == 0:
 		handle_attack_raycast()
 		if chargeLength > 30:
 			attackCooldown = 100
 		chargeLength = 0
 		attackTimer = 20
-	pass
 
 func get_input():
 	velocity = Vector2()
@@ -72,7 +73,6 @@ func get_input():
 			status = 'idle'
 	
 	velocity = velocity.normalized() * speed
-	pass
 	
 func handle_attack_cooldown():
 	if(attackCooldown > 0):
@@ -84,12 +84,6 @@ func handle_attack():
 		status = "attack"
 	else:
 		status = "idle"
-pass
-
-#func _draw():
-#	print('draw')
-#	var raycastDistance = 50 if (get_node("AnimatedSprite").flip_h) else -50
-#	draw_line(Vector2(0,-30),Vector2(raycastDistance,-30),Color.red,1,true)
 
 func _physics_process(_delta):
 #	update()

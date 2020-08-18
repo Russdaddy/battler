@@ -7,12 +7,14 @@ var velocity = Vector2(0,0)
 var hSpeed = -500
 var vSpeed = 0
 var horizontalDecayRate = 10
+var verticalDecayRate = 10
 var hittable = true
 var hit = false
 var hitFrom = Vector2(0,0)
 var movementInterval = 200
 var hitTimer = 100
 var dead = false
+var hitPower = 20
 
 var rng = RandomNumberGenerator.new()
 
@@ -25,20 +27,44 @@ func _ready():
 	position.y = ypos
 
 func handle_hit(delta):
+
 	if hit:
+		#difference from distance
+		var x = round(abs(hitFrom.x - position.x))
+		var y = round(abs(hitFrom.y - position.y))
+		#even
+		if fmod(x,2) != 0:
+			x = x-1
+		if fmod(y,2) != 0:
+			y = y-1
+			
 		hitTimer = 100
 		dead = true
-		hSpeed = 500 if (hitFrom.x < self.position.x) else -500
+		horizontalDecayRate = x * (hitPower / 12)
+		verticalDecayRate = y * (hitPower / 12)
+		print(verticalDecayRate," ", horizontalDecayRate)
+		hSpeed = (x * hitPower) if (hitFrom.x < position.x) else -(x*hitPower)
+		vSpeed = (y * hitPower) if (hitFrom.y < position.y) else -(y*hitPower)
 		hit = false
 
 func handle_movement(delta):
-	var velocity = Vector2(hSpeed,vSpeed)
+	velocity = Vector2(hSpeed,vSpeed)
 	move_and_collide(velocity * delta)
 	if(hSpeed > 0):
-		hSpeed -= horizontalDecayRate
+		if(hSpeed < horizontalDecayRate): 
+			hSpeed = 0
+			vSpeed = 0
+		else: hSpeed -= horizontalDecayRate
 	elif (hSpeed < 0):
 		hSpeed += horizontalDecayRate
-	if hitTimer == 0 && movementInterval == 0:
+	if(vSpeed > 0):
+		if(vSpeed < verticalDecayRate): 
+			vSpeed = 0
+			hSpeed = 0
+		else: vSpeed -= verticalDecayRate
+	elif (vSpeed < 0):
+		vSpeed += verticalDecayRate
+	if hitTimer == 0 && movementInterval == 0 && dead == false:
 		hSpeed = -300
 		movementInterval = 200
 	
@@ -49,7 +75,7 @@ func handle_timers():
 		movementInterval-=2
 
 func handle_death():
-	if hSpeed == 0 && dead == true:
+	if (hSpeed + vSpeed) == 0 && dead == true:
 		self.queue_free()
 
 func _physics_process(delta):
