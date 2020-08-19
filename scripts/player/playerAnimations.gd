@@ -37,6 +37,8 @@ func _process(delta):
 			set_animation("charging")
 		"attack":
 			set_animation("attack")
+		"attack_quick":
+			set_animation("attack_quick")
 		"run_left":
 			set_animation("run")
 		"run_right":
