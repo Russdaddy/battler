@@ -14,7 +14,7 @@ func _ready():
 	play()
 	pass # Replace with function body.
 
-#last pressed tracking for turn
+#last pressed tracking
 func _input(event):
 	if(event.is_action_released("ui_right")): 
 		last_pressed = "right"
@@ -23,7 +23,6 @@ func _input(event):
 	pass
 	
 func handle_flipping():
-	set_animation("run")
 	if Input.is_action_pressed("ui_right"):
 		flip_h = true
 	elif Input.is_action_pressed("ui_left"):
@@ -32,23 +31,21 @@ func handle_flipping():
 		flip_h = true if last_pressed == "right" else false
 	
 func _process(delta):
+	handle_flipping()
 	match get_node("..").status:
 		"charge":
 			set_animation("charging")
 		"attack":
 			set_animation("attack")
 		"run_left":
-			flip_h = false
 			set_animation("run")
 		"run_right":
-			flip_h = true
 			set_animation("run")
 		"run_up":
-			handle_flipping()
+			set_animation("run")
 		"run_down":
-			handle_flipping()
+			set_animation("run")
 		"idle":
-			flip_h = true if last_pressed == "right" else false
 			set_animation('default')
 	
 #	elif(!Input.is_action_pressed('ui_left') && !Input.is_action_pressed('ui_right')):

@@ -9,7 +9,8 @@ export (int) var speed = 5
 var velocity = Vector2()
 #one of idle,charge,attack,run_left_,run_right
 var status:String = 'idle'
-var attackTimer = 0;
+var strongAttackTimer = 0;
+var quickAttackTimer = 0;
 var chargeLength = 0;
 export var attackCooldown = 0
 
@@ -48,15 +49,17 @@ func _input(event):
 		handle_attack_raycast()
 		if chargeLength > 30:
 			attackCooldown = 100
-		chargeLength = 0
-		attackTimer = 20
+			strongAttackTimer = 20
+		
+		chargeLength = 0	
 
 func get_input():
 	velocity = Vector2()
 	if Input.is_action_pressed('charge') && attackCooldown == 0:
 		chargeLength+=1
-		status = 'charge'
-	elif attackTimer == 0: 
+		if chargeLength > 10:
+			status = 'charge'
+	elif strongAttackTimer == 0: 
 		if Input.is_action_pressed('ui_right'):
 			status = 'run_right'
 			velocity.x +=1
@@ -79,8 +82,11 @@ func handle_attack_cooldown():
 		attackCooldown -=1
 
 func handle_attack():
-	if(attackTimer > 0):
-		attackTimer -= 1
+	if(strongAttackTimer > 0):
+		strongAttackTimer -= 1
+		status = "attack"
+	elif(quickAttackTimer > 0):
+		quickAttackTimer -= 1
 		status = "attack"
 	else:
 		status = "idle"
