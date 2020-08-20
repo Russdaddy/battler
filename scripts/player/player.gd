@@ -26,31 +26,33 @@ signal attack_hit
 #func _ready():
 #	pass # Replace with function body.
 	
-func handle_attack_raycast():
+func handle_attack_raycast(strength):
 	var raycastDistance = 50 if (get_node("AnimatedSprite").flip_h) else -50
 	rayMid = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y),[self])
-	rayTop = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y - 40),[self])
-	rayBot = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y + 40),[self])
+	rayTop = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y - raycastDistance),[self])
+	rayBot = space_state.intersect_ray(Vector2(self.position.x,self.position.y),Vector2(self.position.x + raycastDistance,self.position.y + raycastDistance),[self])
 	
 	if rayMid:
-		handleRayHit(rayMid)
+		handleRayHit(rayMid,strength)
 	if rayTop:
-		handleRayHit(rayTop)
+		handleRayHit(rayTop,strength)
 	if rayBot:
-		handleRayHit(rayBot)
+		handleRayHit(rayBot,strength)
 
-func handleRayHit(ray):
+func handleRayHit(ray,strength):
 	if ray.collider.hittable:
 		ray.collider.hit = true
+		ray.collider.hitPower = strength * 500
 		ray.collider.hitFrom = Vector2(self.position.x,self.position.y)
 	
 func _input(event):
 	if event.is_action_released('charge') && attackCooldown == 0:
-		handle_attack_raycast()
 		if chargeLength > 20:
+			handle_attack_raycast(3)
 			attackCooldown = 100
 			strongAttackTimer = 20
 		else:
+			handle_attack_raycast(1)
 			quickAttackTimer = 20
 		chargeLength = 0	
 
@@ -75,7 +77,6 @@ func get_input():
 			velocity.y -=1
 		if !Input.is_action_pressed('ui_right') && !Input.is_action_pressed('ui_left') && !Input.is_action_pressed('ui_up') && !Input.is_action_pressed('ui_down') && status != 'attack':
 			status = 'idle'
-	
 	velocity = velocity.normalized() * speed
 	
 func handle_attack_cooldown():
@@ -93,7 +94,6 @@ func handle_attack():
 		status = "idle"
 
 func _physics_process(_delta):
-#	update()
 	space_rid = get_world_2d().space
 	space_state = Physics2DServer.space_get_direct_state(space_rid)
 	handle_attack()
