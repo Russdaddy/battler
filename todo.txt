@@ -1,0 +1,12 @@
+High Priority:
+- Cooldown bars / blink
+- Slime enemy art
+- Basic enemy pathfinding
+- Better quick attack animation
+- Ranged ability?
+
+
+
+Low Priority:
+- Enemy AI
+- Environment art

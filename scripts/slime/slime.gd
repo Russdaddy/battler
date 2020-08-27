@@ -43,7 +43,6 @@ func handle_timers():
 
 func handle_death():
 	if int(velocity.x) == 0 && int(velocity.y) == 0 && (dead == true):
-		print('doing')
 		self.queue_free()
 
 func _physics_process(delta):
